@@ -9,7 +9,6 @@ Android Developer Tools
 提供的一键搭载环境工具。
 
 代码借鉴：https://github.com/ruling/auto
-
         https://github.com/yun-percy/Android_Shell_Tools
 
 维护者：
