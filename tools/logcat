@@ -1,0 +1,49 @@
+#!/bin/bash
+
+whiptail --title "提示"  --yes-button "确定"  --no-button "取消"  --yesno "请连接你的手机再进行后续操作." 10 80
+	if [ "$?" == "0" ]; then	
+		source $toolsDir/cs
+		mkdir $logDir
+	else
+		devtools
+	fi
+whiptail --title "提示"  --yes-button "打开"  --no-button "取消"  --yesno "是否打开logcat颜色显示功能，不选择默认将不使用颜色." 10 80
+	if [ "$?" == "0" ]; then	
+		curl https://raw.githubusercontent.com/GaHoKwan/colored-adb-logcat/master/colored-adb-logcat.py > $thisDir/colored-adb-logcat.py
+		chmod a+x $logDir/colored-adb-logcat.py
+		export logcat="python colored-adb-logcat.py"
+	else
+		export logcat="adb logcat -b main -b system -b radio"
+	fi
+logcatmode=$(whiptail --backtitle "过程中按ctrl+c退出" --title "这是抓取log的工具" --menu "请选择" 15 60 8 \
+"1" "把所有的log输出到$logDir的文件上" \
+"2" "把你想过滤的内容输出到终端并保存到文件" \
+"3" "抓取VFY到文件" \
+"4" "抓取E/AndroidRuntime到文件"  \
+"5" "抓取System.err到文件"  \
+"6" "抓取E/错误log到文件"  \
+"0" "离开" 3>&1 1>&2 2>&3)
+case $logcatmode in
+	1)
+		$logcat > $logDir/log_`date +%H%M%S`
+	;;
+	2)
+		ignoretext=$(whiptail --title "内容过滤" --inputbox "输入你想过滤的内容" 10 60  3>&1 1>&2 2>&3)
+		$logcat |grep $ignoretext|tee $logDir/log_`date +%H%M%S`
+	;;
+	3)
+		$logcat |grep -C 5 'VFY'|tee $logDir/log_`date +%H%M%S`
+	;;
+	4)
+		$logcat |grep 'E/AndroidRuntime'|tee $logDir/log_`date +%H%M%S`
+	;;
+	5)
+		$logcat |grep 'System.err'|tee $logDir/log_`date +%H%M%S`
+	;;
+	6)
+		$logcat |grep -C 5 'E/'|tee $logDir/log_`date +%H%M%S`
+	;;
+	*)
+		main
+	;;
+esac

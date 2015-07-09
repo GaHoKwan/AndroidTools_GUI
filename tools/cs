@@ -1,0 +1,67 @@
+#!/bin/bash
+#此脚本用来 DIY ROM 用
+#制作者：陈云
+#修改：luo2888
+PATH=/bin:/sbin:/usr/bin:usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:~/yun
+export PATH
+
+TRYING_TIMES=1
+MODE="null"
+output_infomation(){
+	echo -n "设备 "
+	echo -ne "\033[32m已连接\033[0m"
+	echo -n ",在 "
+	echo -e "\033[36m$MODE模式\033[0m"
+
+}
+check_android_status(){
+result1=$(adb devices)
+# echo result1:$result1
+result2=`echo $result1|awk '{print $NF}'`
+# echo "result2:$result2"
+case "$result2" in
+	"device" )
+		MODE="开机"
+		output_infomation
+		return 2
+		;;
+	"recovery" )
+		MODE="Recovery"
+		output_infomation
+		return 3
+		;;
+	* )
+		result3=$(fastboot devices)
+		result4=`echo $result3|awk '{print $NF}'`
+		if [[ "$result4" == "fastboot" ]]; then
+			MODE="Fastboot/Bootloader"
+			output_infomation
+			return 4
+		else
+			echo -n "设备 "
+			echo -ne "\033[31m没有连接 \033[0m"
+			echo -n " 正在重试 --> "
+			echo -e "\033[33m$TRYING_TIMES\033[0m"
+			sleep 2
+			((TRYING_TIMES++))
+			check_android_status
+		fi
+		;;
+	# *)
+
+		# default
+esac
+}
+
+if [ "$1" == "-s" ]; then
+	sudo adb kill-server >/dev/null
+	sudo adb start-server >/dev/null
+	check_android_status
+elif [ "$1" == "" ]; then
+	adb start-server >/dev/null
+	check_android_status
+else
+	check_android_status
+fi
+
+
