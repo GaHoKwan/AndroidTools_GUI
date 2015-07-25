@@ -2,8 +2,6 @@
 #此脚本用来 DIY ROM 用
 #制作者：陈云
 #修改：luo2888
-PATH=/bin:/sbin:/usr/bin:usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:~/yun
-export PATH
 
 TRYING_TIMES=1
 MODE="null"
