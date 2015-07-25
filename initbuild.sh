@@ -110,9 +110,7 @@ configurechoose=$(whiptail --title "请输入你想安装的环境" --menu "请�
 "3" "aosp&cm&recovery编译环境" \
 "4" "adb运行环境"  \
 "5" "AndroidSDK运行环境"  \
-"6" "flyme项目中文环境"  \
-"7" "hosts环境"  \
-"8" "安卓开发必备环境(上面1234）"  \
+"6" "安卓开发必备环境(上面1234）"  \
 "0" "离开" 3>&1 1>&2 2>&3)
 case $configurechoose in
 	1)
@@ -140,14 +138,6 @@ case $configurechoose in
 		initSystemConfigure
 	;;
 	6)
-		whiptail --title "提示" --msgbox "由于翻译工作暂未完成，该功能将于后续版本开放." 10 60
-		initSystemConfigure
-	;;
-	7)
-		whiptail --title "提示" --msgbox "由于hosts的不稳定性，所以于flyme专版去除该功能." 10 60
-		initSystemConfigure
-	;;
-	8)
 		kind=$(whiptail --backtitle "开始安卓开发环境..." --title "请选择使用的系统版本" --menu "请选择" 15 60 5 \
 "1" "ubuntu 12.04 及以下(此项不安装编译环境）" \
 "2" "ubuntu 14.04 以上及deepin等基于ubuntu14.04的系统" \
@@ -180,33 +170,6 @@ case $configurechoose in
 					initSystemConfigure
 			;;
 		esac
-	;;
-esac
-}
-
-changeflymelanguage(){
-flymeDir=$(dialog --backtitle "方向键上下选择,单击空格选择,双击空格进入目录,退格键返回上一层,回车键确认路径"  --title "选择flyme项目所在目录(可以把目录拖进来) "  --dselect ~/ 7 40 3>&1 1>&2 2>&3)
-whiptail --title "flyme项目环境" --yes-button "中文" --no-button "英文" --yesno "请选择语言." 10 80
-if [ "$?" == "0" ]; then
-	export languagechoose=1
-else
-	export languagechoose=2
-fi
-case $languagechoose in
-	1)
-		cd ${flymeDir//\'//}
-		patch -p1<$toolsDir/flyme.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	2)
-		cd ${flymeDir//\'//}
-		patch -R -p1<$toolsDir/flyme.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	*)
-		main
 	;;
 esac
 }
@@ -322,7 +285,7 @@ installrepo(){
 
 repoSource(){
 	if [ ! -f ~/bin/repo ]; then
-	installrepo
+		installrepo
 	fi
 	clear
 	sDir=$(dialog --backtitle "方向键上下选择,单击空格选择,双击空格进入目录,退格键返回上一层,回车键确认路径"  --title "输入存放源码的地址 "  --dselect ~/ 7 40 3>&1 1>&2 2>&3)
@@ -342,7 +305,7 @@ repoSource(){
 
 fastrepoSource(){
 	if [ ! -f ~/bin/repo ]; then
-	installrepo
+		installrepo
 	fi
 	clear
 	sDir=$(dialog --backtitle "方向键上下选择,单击空格选择,双击空格进入目录,退格键返回上一层,回车键确认路径"  --title "输入存放源码的地址 "  --dselect ~/ 7 40 3>&1 1>&2 2>&3)
